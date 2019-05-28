@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D47E4660229D5A8B0039D9A5 /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = D47E465E229D5A8B0039D9A5 /* Utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D47E4668229D5AA70039D9A5 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47E4667229D5AA70039D9A5 /* UIView+Extensions.swift */; };
+		D4C512C6229D5CEF0086A107 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D47E465F229D5A8B0039D9A5 /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -132,6 +133,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4C512C6229D5CEF0086A107 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,7 +296,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -320,7 +322,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
