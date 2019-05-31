@@ -22,6 +22,14 @@ extension UIView {
         self.insertSubview(blurEffectView, at: 0)
     }
     
+    public func removeBlur() {
+        for subview in self.subviews {
+            if subview is UIVisualEffectView {
+                subview.removeFromSuperview()
+            }
+        }
+    }
+    
     public func roundCorners(radius: CGFloat) {
         self.layer.masksToBounds = true
         self.layer.cornerRadius = radius
@@ -40,5 +48,39 @@ extension UIView {
             self.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: bottomOffset)
         ]
         NSLayoutConstraint.activate(constraints)
+    }
+    
+    public func setShadows(offset: CGSize, opacity: Float, radius: CGFloat) {
+        self.layer.masksToBounds = true
+        self.backgroundColor = UIColor.clear
+        self.layer.borderColor = UIColor.black.cgColor
+        self.layer.shadowOpacity = opacity
+        self.layer.shadowRadius = radius
+        self.layer.shadowOffset = offset
+        self.layer.shadowPath = UIBezierPath(rect: self.bounds).cgPath
+    }
+    
+    public func addPulseAnimation(duration: CFTimeInterval, repeatCount: Float) {
+        let pulse = CASpringAnimation(keyPath: "transform.scale")
+        pulse.duration = 1.0
+        pulse.fromValue = 0.95
+        pulse.toValue = 1.0
+        pulse.autoreverses = true
+        pulse.repeatCount = .greatestFiniteMagnitude
+        pulse.initialVelocity = 0.5
+        pulse.damping = 0.8
+        
+        let animationGroup = CAAnimationGroup()
+        animationGroup.duration = duration
+        animationGroup.repeatCount = repeatCount
+        animationGroup.animations = [pulse]
+        
+        self.layer.add(animationGroup, forKey: "pulse")
+    }
+    
+    public func showRoundBorder(radius: CGFloat, color: UIColor? = nil) {
+        layer.borderWidth = 1
+        layer.borderColor = color?.cgColor ?? UIColor.black.cgColor
+        roundCorners(radius: radius)
     }
 }
