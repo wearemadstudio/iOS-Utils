@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name              = 'MadUtils'
-s.version           = '0.0.4'
+s.version           = '0.1.1'
 s.summary           = 'Contains a collection of utils'
 s.homepage          = 'https://github.com/wearemadru/iOS-Utils'
 s.description = <<-DESC
@@ -14,5 +14,5 @@ s.source            = {
 :git => 'https://github.com/wearemadru/iOS-Utils.git',
 :tag => "#{s.version}" }
 s.framework = "UIKit"
-s.source_files      = 'Utils/Utils/UIView/*'
+s.source_files      = 'Utils/Utils/Classes/*'
 end
