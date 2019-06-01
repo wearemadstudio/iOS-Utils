@@ -6,7 +6,7 @@
 //  Copyright © 2018 GALT. All rights reserved.
 //
 
-func getDurationString(from seconds: Double) -> String {
+public func getDurationString(from seconds: Double) -> String {
     let formatter = DateComponentsFormatter()
     formatter.unitsStyle = .positional
     formatter.allowedUnits = [.minute, .second]
@@ -15,9 +15,9 @@ func getDurationString(from seconds: Double) -> String {
     return formattedDuration ?? "0:00"
 }
 
-extension String {
+public extension String {
     
-    public var containsEmoji: Bool {
+    var containsEmoji: Bool {
         for scalar in unicodeScalars {
             switch scalar.value {
             case 0x1F600...0x1F64F, // Emoticons
@@ -37,7 +37,7 @@ extension String {
         return false
     }
     
-    public static func randomString(length: Int) -> String {
+    static func randomString(length: Int) -> String {
         let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         let len = UInt32(letters.length)
         
@@ -52,7 +52,7 @@ extension String {
         return randomString
     }
     
-    public func getYoutubeId() -> String? {
+    func getYoutubeId() -> String? {
         let pattern = "(?<=v(=|/))([-a-zA-Z0-9_]+)|(?<=youtu.be/)([-a-zA-Z0-9_]+)"
         guard let regExp = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else {
             return nil

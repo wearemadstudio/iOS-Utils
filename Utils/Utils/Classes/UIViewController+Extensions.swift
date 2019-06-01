@@ -6,6 +6,8 @@
 //  Copyright © 2019 wearemad. All rights reserved.
 //
 
+import UIKit
+
 extension UIViewController {
     
     public func add(childViewController: UIViewController, to view: UIView) {
