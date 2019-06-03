@@ -77,7 +77,6 @@
 				A11BEB1D35185EBD12B0BB45 /* Pods-Utils.debug.xcconfig */,
 				68DDDCF97D609A614D71B32C /* Pods-Utils.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -89,80 +88,28 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		D40781BF22A503E900F34F4C /* CustomView */ = {
-			isa = PBXGroup;
-			children = (
-				D4794E6222A1557400E72357 /* GradientButton.swift */,
-				D4794E6622A1589A00E72357 /* GradinetView.swift */,
-				D4794E6A22A1625600E72357 /* GrowingTextView.swift */,
-				D4794E6422A156BC00E72357 /* EZYGradientView.swift */,
-				D4794E6822A15ACB00E72357 /* SearchWithIconClearButtonTextField.swift */,
-				D4794E6022A1529E00E72357 /* ImageScrollView.swift */,
-			);
-			path = CustomView;
-			sourceTree = "<group>";
-		};
-		D40781C022A5043800F34F4C /* String */ = {
-			isa = PBXGroup;
-			children = (
-				D4794E7022A1679200E72357 /* String+Extensions.swift */,
-			);
-			path = String;
-			sourceTree = "<group>";
-		};
-		D40781C122A5048A00F34F4C /* UIColor */ = {
-			isa = PBXGroup;
-			children = (
-				D4794E7422A16B4000E72357 /* UIColor+Extensions.swift */,
-			);
-			path = UIColor;
-			sourceTree = "<group>";
-		};
-		D40781C222A504A500F34F4C /* Device */ = {
-			isa = PBXGroup;
-			children = (
-				D4794E7622A16B8C00E72357 /* UIDevice+Extensions.swift */,
-			);
-			path = Device;
-			sourceTree = "<group>";
-		};
-		D40781C322A504B900F34F4C /* UIViewController */ = {
-			isa = PBXGroup;
-			children = (
-				D4794E7B22A16DF600E72357 /* UIViewController+Extensions.swift */,
-			);
-			path = UIViewController;
-			sourceTree = "<group>";
-		};
-		D40781C422A504E100F34F4C /* UIAlertController */ = {
-			isa = PBXGroup;
-			children = (
-				D4794E7222A1685400E72357 /* UIAlertController+Extensions.swift */,
-			);
-			path = UIAlertController;
-			sourceTree = "<group>";
-		};
-		D40781C522A506B600F34F4C /* RequestProtocol */ = {
-			isa = PBXGroup;
-			children = (
-				D40781C622A5089000F34F4C /* RequestProtocol.swift */,
-			);
-			path = RequestProtocol;
-			sourceTree = "<group>";
-		};
 		D4794E5922A138BE00E72357 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				D40781BF22A503E900F34F4C /* CustomView */,
-				D40781C222A504A500F34F4C /* Device */,
-				D40781C522A506B600F34F4C /* RequestProtocol */,
-				D40781C022A5043800F34F4C /* String */,
-				D40781C422A504E100F34F4C /* UIAlertController */,
-				D40781C122A5048A00F34F4C /* UIColor */,
-				D47E4666229D5A970039D9A5 /* UIView */,
-				D40781C322A504B900F34F4C /* UIViewController */,
+				D4794E6422A156BC00E72357 /* EZYGradientView.swift */,
+				D4794E6222A1557400E72357 /* GradientButton.swift */,
+				D4794E6622A1589A00E72357 /* GradinetView.swift */,
+				D4794E6A22A1625600E72357 /* GrowingTextView.swift */,
+				D4794E6022A1529E00E72357 /* ImageScrollView.swift */,
 				D4794E6E22A1666300E72357 /* MulticastDelegate.swift */,
+				D40781C622A5089000F34F4C /* RequestProtocol.swift */,
+				D4794E6822A15ACB00E72357 /* SearchWithIconClearButtonTextField.swift */,
 				D4794E5C22A14CF200E72357 /* StoreReviewHelper.swift */,
+				D4794E7022A1679200E72357 /* String+Extensions.swift */,
+				D4794E7222A1685400E72357 /* UIAlertController+Extensions.swift */,
+				D4794E7422A16B4000E72357 /* UIColor+Extensions.swift */,
+				D4794E7622A16B8C00E72357 /* UIDevice+Extensions.swift */,
+				D4794E7922A16C2D00E72357 /* UIImage+Extensions.swift */,
+				D4794E5E22A1517D00E72357 /* UILabel+Extensions.swift */,
+				D4794E5A22A1408B00E72357 /* UITextField+Extensions.swift */,
+				D4794E6C22A1637800E72357 /* UITextView+Extensions.swift */,
+				D47E4667229D5AA70039D9A5 /* UIView+Extensions.swift */,
+				D4794E7B22A16DF600E72357 /* UIViewController+Extensions.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -193,18 +140,6 @@
 				D47E465F229D5A8B0039D9A5 /* Info.plist */,
 			);
 			path = Utils;
-			sourceTree = "<group>";
-		};
-		D47E4666229D5A970039D9A5 /* UIView */ = {
-			isa = PBXGroup;
-			children = (
-				D4794E7922A16C2D00E72357 /* UIImage+Extensions.swift */,
-				D4794E5E22A1517D00E72357 /* UILabel+Extensions.swift */,
-				D4794E5A22A1408B00E72357 /* UITextField+Extensions.swift */,
-				D4794E6C22A1637800E72357 /* UITextView+Extensions.swift */,
-				D47E4667229D5AA70039D9A5 /* UIView+Extensions.swift */,
-			);
-			path = UIView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
