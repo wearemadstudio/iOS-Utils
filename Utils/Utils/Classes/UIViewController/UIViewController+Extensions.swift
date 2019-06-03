@@ -8,9 +8,9 @@
 
 import UIKit
 
-extension UIViewController {
+public extension UIViewController {
     
-    public func add(childViewController: UIViewController, to view: UIView) {
+    func add(childViewController: UIViewController, to view: UIView) {
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(containerView)
@@ -28,7 +28,7 @@ extension UIViewController {
         childViewController.didMove(toParent: self)
     }
     
-    public func hideNavigationBarOnScrolling(scrollView: UIScrollView, hideOffset: CGFloat? = -100, showOffset: CGFloat? = 100) {
+    func hideNavigationBarOnScrolling(scrollView: UIScrollView, hideOffset: CGFloat? = -100, showOffset: CGFloat? = 100) {
         let velocity = scrollView.panGestureRecognizer.velocity(in: scrollView).y
         
         if velocity < hideOffset ?? -100 {
