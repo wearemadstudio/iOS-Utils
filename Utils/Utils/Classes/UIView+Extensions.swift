@@ -78,8 +78,8 @@ public extension UIView {
         self.layer.add(animationGroup, forKey: "pulse")
     }
     
-    func showRoundBorder(radius: CGFloat, color: UIColor? = nil) {
-        layer.borderWidth = 1
+    func setBorderAndRoundCorners(width: CGFloat, radius: CGFloat, color: UIColor? = nil) {
+        layer.borderWidth = width
         layer.borderColor = color?.cgColor ?? UIColor.black.cgColor
         roundCorners(radius: radius)
     }

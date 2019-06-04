@@ -10,10 +10,10 @@ import StoreKit
 
 public struct StoreReviewHelper {
     
-    static let userDefaultsAppOpenedKey = "appOpenedCount"
-    static var appId = ""
+    public static let userDefaultsAppOpenedKey = "appOpenedCount"
+    public static var appId = ""
     
-    static func incrementAppOpenedCount() {
+    public static func incrementAppOpenedCount() {
         let userDefaults = UserDefaults.standard
         var appOpenCount = userDefaults.integer(forKey: StoreReviewHelper.userDefaultsAppOpenedKey)
         appOpenCount += 1
@@ -21,21 +21,21 @@ public struct StoreReviewHelper {
         userDefaults.synchronize()
     }
     
-    static func checkAndAskForReview() {
+    public static func checkAndAskForReview() {
         let userDefaults = UserDefaults.standard
         let appOpenCount = userDefaults.integer(forKey: StoreReviewHelper.userDefaultsAppOpenedKey)
         
         switch appOpenCount {
         case 10, 50:
-            StoreReviewHelper().requestReview()
+            StoreReviewHelper.requestReview()
         case _ where appOpenCount % 100 == 0 :
-            StoreReviewHelper().requestReview()
+            StoreReviewHelper.requestReview()
         default:
             break;
         }
     }
     
-    private func requestReview() {
+    static public func requestReview() {
         if #available(iOS 10.3, *) {
             SKStoreReviewController.requestReview()
         } else {
