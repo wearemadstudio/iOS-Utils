@@ -7,3 +7,8 @@ Includes utils collection for iOS Apps
 
 ```Ruby
 pod 'MadUtils'
+```
+
+## External Dependencies
+- Alamofire 5.0.0
+- Nuke
