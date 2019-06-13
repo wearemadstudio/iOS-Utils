@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 - Added UserDefaults+Extensions.swift
 - New dependencies: pod Nuke
 
-## [0.2.0] - 2019-06-10
+## [0.2.0] - 2019-06-04
 - UIView+Extensions.swift
 showRoundBorder(radius:color:) -> setBorderAndRoundCorners(width:radius:color:)
 - StoreReviewHelper.swift added public keyword
