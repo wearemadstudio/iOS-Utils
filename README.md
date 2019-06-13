@@ -10,8 +10,8 @@ pod 'MadUtils'
 ```
 
 ## Зависимости
-- Alamofire 5.0.0
-- Nuke
+- [Alamofire 5.0.0](https://github.com/Alamofire/Alamofire)
+- [Nuke](https://github.com/kean/Nuke)
 
 ## Список файлов
 
