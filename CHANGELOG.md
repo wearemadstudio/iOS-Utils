@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.7] - 2019-08-14
+- Rename ```Request``` to ```RequestProtocol```
+
 ## [0.2.6] - 2019-06-14
 - Added ```adjustFontSizeToFit(minimumFontSize: CGFloat, maximumFontSize: CGFloat)``` to UILabel+Extensions
 

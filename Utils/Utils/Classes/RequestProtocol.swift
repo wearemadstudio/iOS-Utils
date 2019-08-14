@@ -9,7 +9,7 @@
 import Foundation
 import Alamofire
 
-public protocol Request {
+public protocol RequestProtocol {
     var baseURLString: String { get set }
     var parameters: Parameters? { get set }
     var headers: HTTPHeaders? { get set }
@@ -18,7 +18,7 @@ public protocol Request {
     func method () -> HTTPMethod
 }
 
-public extension Request {
+public extension RequestProtocol {
     
     func baseURL () -> String {
         return baseURLString
