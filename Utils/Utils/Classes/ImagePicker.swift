@@ -12,7 +12,7 @@ protocol ImagePickerDelegate: class {
     func didSelect(image: UIImage?)
 }
 
-final class ImagePicker: NSObject {
+public class ImagePicker: NSObject {
 
     private let imagePicker: UIImagePickerController
     private weak var presentationController: UIViewController?
@@ -28,7 +28,7 @@ final class ImagePicker: NSObject {
         imagePicker.mediaTypes = ["public.image"]
     }
     
-    func present() {
+    public func present() {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         if let cameraAction = action(for: .camera, title: "Сделать снимок") {
             alertController.addAction(cameraAction)
@@ -40,7 +40,7 @@ final class ImagePicker: NSObject {
         presentationController?.present(alertController, animated: true)
     }
     
-    func openPicker(by type: UIImagePickerController.SourceType) {
+    public func openPicker(by type: UIImagePickerController.SourceType) {
         imagePicker.sourceType = type
         presentationController?.present(imagePicker, animated: true)
     }
@@ -72,7 +72,6 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
         guard let image = info[.originalImage] as? UIImage else {
             return dismissPickerController(picker, didSelect: nil)
         }
-        let fixedImage = image.fixedOrientation()
-        dismissPickerController(picker, didSelect: fixedImage)
+        dismissPickerController(picker, didSelect: image)
     }
 }
