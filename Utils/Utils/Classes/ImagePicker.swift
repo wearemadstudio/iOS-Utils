@@ -64,11 +64,11 @@ public class ImagePicker: NSObject {
 
 // MARK: - UIImagePickerControllerDelegate -
 extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismissPickerController(picker, didSelect: nil)
     }
         
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let image = info[.originalImage] as? UIImage else {
             return dismissPickerController(picker, didSelect: nil)
         }

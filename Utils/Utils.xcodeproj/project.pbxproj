@@ -12,6 +12,7 @@
 		D44BF1CC22AE39C500CB7EAB /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44BF1CB22AE39C500CB7EAB /* UIImageView+Extensions.swift */; };
 		D44BF1CE22AE3AE600CB7EAB /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44BF1CD22AE3AE600CB7EAB /* UserDefaults+Extensions.swift */; };
 		D44BF1D022AE3B5400CB7EAB /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44BF1CF22AE3B5400CB7EAB /* Bundle+Extensions.swift */; };
+		D453A6D723B625BF00BEA52A /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D453A6D623B625BF00BEA52A /* ImagePicker.swift */; };
 		D4794E5B22A1408B00E72357 /* UITextField+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4794E5A22A1408B00E72357 /* UITextField+Extensions.swift */; };
 		D4794E5D22A14CF200E72357 /* StoreReviewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4794E5C22A14CF200E72357 /* StoreReviewHelper.swift */; };
 		D4794E5F22A1517D00E72357 /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4794E5E22A1517D00E72357 /* UILabel+Extensions.swift */; };
@@ -41,6 +42,7 @@
 		D44BF1CB22AE39C500CB7EAB /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		D44BF1CD22AE3AE600CB7EAB /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
 		D44BF1CF22AE3B5400CB7EAB /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
+		D453A6D623B625BF00BEA52A /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		D4794E5A22A1408B00E72357 /* UITextField+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Extensions.swift"; sourceTree = "<group>"; };
 		D4794E5C22A14CF200E72357 /* StoreReviewHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreReviewHelper.swift; sourceTree = "<group>"; };
 		D4794E5E22A1517D00E72357 /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 		D4794E5922A138BE00E72357 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				D453A6D623B625BF00BEA52A /* ImagePicker.swift */,
 				D44BF1CF22AE3B5400CB7EAB /* Bundle+Extensions.swift */,
 				D4794E6422A156BC00E72357 /* EZYGradientView.swift */,
 				D4794E6222A1557400E72357 /* GradientButton.swift */,
@@ -268,6 +271,7 @@
 				D4794E6122A1529E00E72357 /* ImageScrollView.swift in Sources */,
 				D44BF1CC22AE39C500CB7EAB /* UIImageView+Extensions.swift in Sources */,
 				D4794E7322A1685400E72357 /* UIAlertController+Extensions.swift in Sources */,
+				D453A6D723B625BF00BEA52A /* ImagePicker.swift in Sources */,
 				D44BF1D022AE3B5400CB7EAB /* Bundle+Extensions.swift in Sources */,
 				D4794E6522A156BC00E72357 /* EZYGradientView.swift in Sources */,
 				D4794E5B22A1408B00E72357 /* UITextField+Extensions.swift in Sources */,
