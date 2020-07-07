@@ -12,13 +12,13 @@ protocol ImagePickerDelegate: class {
     func didSelect(image: UIImage?)
 }
 
-public class ImagePicker: NSObject {
+open class ImagePicker: NSObject {
 
     private let imagePicker: UIImagePickerController
     private weak var presentationController: UIViewController?
     private weak var delegate: ImagePickerDelegate?
     
-    init(presentationController: UIViewController, delegate: ImagePickerDelegate) {
+    init(_ presentationController: UIViewController, _ delegate: ImagePickerDelegate) {
         imagePicker = UIImagePickerController()
         super.init()
         self.presentationController = presentationController
@@ -28,24 +28,24 @@ public class ImagePicker: NSObject {
         imagePicker.mediaTypes = ["public.image"]
     }
     
-    public func present() {
+    func present(cameraTitle: String = "Camera", photoTitle: String = "Photo", cancelTitle: String = "Cancel") {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        if let cameraAction = action(for: .camera, title: "Сделать снимок") {
+        if let cameraAction = action(for: .camera, title: cameraTitle) {
             alertController.addAction(cameraAction)
         }
-        if let photoLibraryAction = action(for: .photoLibrary, title: "Фото") {
+        if let photoLibraryAction = action(for: .photoLibrary, title: photoTitle) {
             alertController.addAction(photoLibraryAction)
         }
-        alertController.addAction(UIAlertAction(title: "Отменить", style: .cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel, handler: nil))
         presentationController?.present(alertController, animated: true)
     }
     
-    public func openPicker(by type: UIImagePickerController.SourceType) {
+    func openPicker(by type: UIImagePickerController.SourceType) {
         imagePicker.sourceType = type
         presentationController?.present(imagePicker, animated: true)
     }
     
-    private func action(for type: UIImagePickerController.SourceType, title: String) -> UIAlertAction? {
+    func action(for type: UIImagePickerController.SourceType, title: String) -> UIAlertAction? {
         guard UIImagePickerController.isSourceTypeAvailable(type) else {
             return nil
         }
@@ -62,7 +62,7 @@ public class ImagePicker: NSObject {
     }
 }
 
-// MARK: - UIImagePickerControllerDelegate -
+// MARK: - UIImagePickerControllerDelegate
 extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismissPickerController(picker, didSelect: nil)

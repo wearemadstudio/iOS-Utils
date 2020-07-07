@@ -8,15 +8,15 @@
 
 import UIKit
 
-extension UIAlertController {
+public extension UIAlertController {
     
-    public func addActions(actions: [UIAlertAction]) {
+    func addActions(actions: [UIAlertAction]) {
         for action in actions {
             self.addAction(action)
         }
     }
     
-    public func setColorsForActions(forCancel: UIColor?, forDefault: UIColor?) {
+    func setColorsForActions(forCancel: UIColor?, forDefault: UIColor?) {
         for action in actions {
             switch action.style {
             case .cancel:
@@ -31,7 +31,7 @@ extension UIAlertController {
         }
     }
     
-    public func setTitleForPromoActionSheet(text: String, textColor: UIColor, textFont: UIFont) {
+    func setTitleForPromoActionSheet(text: String, textColor: UIColor, textFont: UIFont) {
         let attributedString = NSAttributedString(string: text, attributes: [
             NSAttributedString.Key.font : textFont,
             NSAttributedString.Key.foregroundColor : textColor

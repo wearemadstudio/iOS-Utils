@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class MulticastDelegate<T> {
+open class MulticastDelegate<T> {
     
     private class WeakWrapper {
         weak var value: AnyObject?

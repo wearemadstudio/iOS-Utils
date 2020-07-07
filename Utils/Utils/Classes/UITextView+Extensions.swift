@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension UITextView: UITextViewDelegate {
+extension UITextView {
     
     override open var bounds: CGRect {
         didSet {

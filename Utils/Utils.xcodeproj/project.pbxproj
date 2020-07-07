@@ -32,6 +32,9 @@
 		D4794E7C22A16DF600E72357 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4794E7B22A16DF600E72357 /* UIViewController+Extensions.swift */; };
 		D47E4660229D5A8B0039D9A5 /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = D47E465E229D5A8B0039D9A5 /* Utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D47E4668229D5AA70039D9A5 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47E4667229D5AA70039D9A5 /* UIView+Extensions.swift */; };
+		E010C60E24B46A0D004A776F /* UIWindow+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E010C60D24B46A0D004A776F /* UIWindow+Extensions.swift */; };
+		E010C61024B46B0F004A776F /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = E010C60F24B46B0F004A776F /* Types.swift */; };
+		E010C61224B46EA1004A776F /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E010C61124B46EA1004A776F /* Collection+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +67,9 @@
 		D47E465E229D5A8B0039D9A5 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		D47E465F229D5A8B0039D9A5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D47E4667229D5AA70039D9A5 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
+		E010C60D24B46A0D004A776F /* UIWindow+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+Extensions.swift"; sourceTree = "<group>"; };
+		E010C60F24B46B0F004A776F /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
+		E010C61124B46EA1004A776F /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,18 +104,20 @@
 		D4794E5922A138BE00E72357 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				D453A6D623B625BF00BEA52A /* ImagePicker.swift */,
 				D44BF1CF22AE3B5400CB7EAB /* Bundle+Extensions.swift */,
+				E010C61124B46EA1004A776F /* Collection+Extensions.swift */,
 				D4794E6422A156BC00E72357 /* EZYGradientView.swift */,
 				D4794E6222A1557400E72357 /* GradientButton.swift */,
 				D4794E6622A1589A00E72357 /* GradinetView.swift */,
 				D4794E6A22A1625600E72357 /* GrowingTextView.swift */,
+				D453A6D623B625BF00BEA52A /* ImagePicker.swift */,
 				D4794E6022A1529E00E72357 /* ImageScrollView.swift */,
 				D4794E6E22A1666300E72357 /* MulticastDelegate.swift */,
 				D40781C622A5089000F34F4C /* RequestProtocol.swift */,
 				D4794E6822A15ACB00E72357 /* SearchWithIconClearButtonTextField.swift */,
 				D4794E5C22A14CF200E72357 /* StoreReviewHelper.swift */,
 				D4794E7022A1679200E72357 /* String+Extensions.swift */,
+				E010C60F24B46B0F004A776F /* Types.swift */,
 				D4794E7222A1685400E72357 /* UIAlertController+Extensions.swift */,
 				D4794E7422A16B4000E72357 /* UIColor+Extensions.swift */,
 				D4794E7622A16B8C00E72357 /* UIDevice+Extensions.swift */,
@@ -120,6 +128,7 @@
 				D4794E6C22A1637800E72357 /* UITextView+Extensions.swift */,
 				D47E4667229D5AA70039D9A5 /* UIView+Extensions.swift */,
 				D4794E7B22A16DF600E72357 /* UIViewController+Extensions.swift */,
+				E010C60D24B46A0D004A776F /* UIWindow+Extensions.swift */,
 				D44BF1CD22AE3AE600CB7EAB /* UserDefaults+Extensions.swift */,
 			);
 			path = Classes;
@@ -265,7 +274,9 @@
 				D44BF1CE22AE3AE600CB7EAB /* UserDefaults+Extensions.swift in Sources */,
 				D4794E7C22A16DF600E72357 /* UIViewController+Extensions.swift in Sources */,
 				D4794E5F22A1517D00E72357 /* UILabel+Extensions.swift in Sources */,
+				E010C61224B46EA1004A776F /* Collection+Extensions.swift in Sources */,
 				D4794E6322A1557400E72357 /* GradientButton.swift in Sources */,
+				E010C61024B46B0F004A776F /* Types.swift in Sources */,
 				D47E4668229D5AA70039D9A5 /* UIView+Extensions.swift in Sources */,
 				D4794E7122A1679200E72357 /* String+Extensions.swift in Sources */,
 				D4794E6122A1529E00E72357 /* ImageScrollView.swift in Sources */,
@@ -279,6 +290,7 @@
 				D40781C722A5089000F34F4C /* RequestProtocol.swift in Sources */,
 				D4794E7722A16B8C00E72357 /* UIDevice+Extensions.swift in Sources */,
 				D4794E7A22A16C2D00E72357 /* UIImage+Extensions.swift in Sources */,
+				E010C60E24B46A0D004A776F /* UIWindow+Extensions.swift in Sources */,
 				D4794E5D22A14CF200E72357 /* StoreReviewHelper.swift in Sources */,
 				D4794E6F22A1666400E72357 /* MulticastDelegate.swift in Sources */,
 			);

@@ -8,10 +8,21 @@
 
 import UIKit
 
+public struct ShimmerAnimationConfig {
+    var fromValue: Any? = [-1.0, -0.5, 0.0]
+    var toValue: Any? = [1.0, 1.5, 2.0]
+    var duration: CFTimeInterval = 0.9
+    var repeatCount: Float = .infinity
+    
+    static var shimmerAnimationConfig = ShimmerAnimationConfig()
+}
+
 public extension UIView {
     
+    // MARK: - Blur
+    
     func addBlur(color: UIColor, style: UIBlurEffect.Style = .dark) {
-        self.backgroundColor = UIColor.clear
+        backgroundColor = UIColor.clear
         
         let blurEffect = UIBlurEffect(style: style)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
@@ -19,7 +30,7 @@ public extension UIView {
         blurEffectView.contentView.backgroundColor = color
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
-        self.insertSubview(blurEffectView, at: 0)
+        insertSubview(blurEffectView, at: 0)
     }
     
     func removeBlur() {
@@ -30,14 +41,24 @@ public extension UIView {
         }
     }
     
+    // MARK: - Borders'&'Corners
+    
     func roundCorners(radius: CGFloat) {
-        self.layer.masksToBounds = true
-        self.layer.cornerRadius = radius
+        layer.masksToBounds = true
+        layer.cornerRadius = radius
     }
     
     func circularCorners() {
-        self.roundCorners(radius: self.bounds.height * 0.5)
+        roundCorners(radius: bounds.height * 0.5)
     }
+    
+    func setBorderAndRoundCorners(width: CGFloat, radius: CGFloat, color: UIColor? = nil) {
+        layer.borderWidth = width
+        layer.borderColor = color?.cgColor ?? UIColor.black.cgColor
+        roundCorners(radius: radius)
+    }
+    
+    // MARK: - Constraints'&'Positions
     
     func pin(to view: UIView, leftOffset: CGFloat = 0, rightOffset: CGFloat = 0, topOffset: CGFloat = 0, bottomOffset: CGFloat = 0) {
         self.translatesAutoresizingMaskIntoConstraints = false
@@ -50,37 +71,132 @@ public extension UIView {
         NSLayoutConstraint.activate(constraints)
     }
     
-    func setShadows(offset: CGSize, opacity: Float, radius: CGFloat) {
-        self.layer.masksToBounds = true
-        self.backgroundColor = UIColor.clear
-        self.layer.borderColor = UIColor.black.cgColor
-        self.layer.shadowOpacity = opacity
-        self.layer.shadowRadius = radius
-        self.layer.shadowOffset = offset
-        self.layer.shadowPath = UIBezierPath(rect: self.bounds).cgPath
+    // MARK: - Shadow
+    
+    func setShadow(color: UIColor = .black,  size: CGSize, opacity: Float, radius: CGFloat) {
+        clipsToBounds = false
+        layer.shadowColor = color.cgColor
+        layer.shadowOpacity = opacity
+        layer.shadowRadius = radius
+        layer.shadowOffset = size
+        layer.shadowPath = UIBezierPath(rect: bounds).cgPath
     }
     
-    func addPulseAnimation(duration: CFTimeInterval, repeatCount: Float) {
+    func setShadow(color: UIColor,
+                   x: CGFloat = 0,
+                   y: CGFloat = 0,
+                   blur: CGFloat = 0,
+                   spread: CGFloat = 0) {
+        layer.shadowColor = color.cgColor
+        layer.shadowOpacity = 1
+        layer.shadowOffset = CGSize(width: x, height: y)
+        layer.shadowRadius = blur / 2
+        if spread == 0 {
+            layer.shadowPath = nil
+        } else {
+            let rect = bounds.insetBy(dx: -spread, dy: -spread)
+            layer.shadowPath = UIBezierPath(rect: rect).cgPath
+        }
+    }
+    
+    // MARK: - Gradient
+    
+    func hasLinearGradient(name: String = "GradientLayer") -> Bool {
+        return layer.sublayers?.contains { $0.name == name } ?? false
+    }
+    
+    func removeLinearGradient(name: String = "GradientLayer") {
+        layer.sublayers?.first(where: { $0.name == name })?.removeFromSuperlayer()
+    }
+    
+    func setLinearGradient(with colors: [UIColor],
+                           locations: [NSNumber]? = nil,
+                           name: String = "GradientLayer",
+                           vertical: Bool = false,
+                           invertedAxis: Bool = false) {
+        let layer0 = CAGradientLayer()
+        layer0.name = name
+        layer0.colors = colors.map({ $0.cgColor })
+        if let locations = locations {
+            layer0.locations = locations
+        } else {
+            layer0.locations = [0, 0.56, 1]
+        }
+        layer0.startPoint = vertical ? CGPoint(x: 0.5, y: 0) : CGPoint(x: 0.25, y: 0.5)
+        layer0.endPoint = vertical ? CGPoint(x: 0.5, y: 1) : CGPoint(x: 0.75, y: 0.5)
+        if invertedAxis {
+            let tempPoint = layer0.startPoint
+            layer0.startPoint = layer0.endPoint
+            layer0.endPoint = tempPoint
+        }
+        layer0.bounds = frame
+        layer0.position = center
+        layer0.frame = bounds
+        layer.insertSublayer(layer0, below: layer.sublayers?.first)
+    }
+    
+    func addPulseAnimation(fromValue: Double = 1, toValue: Double = 1.1,
+                           autoreverses: Bool = true,
+                           repeatCount: Float = .greatestFiniteMagnitude,
+                           initialVelocity: CGFloat = 0.1,
+                           damping: CGFloat = 0,
+                           mass: CGFloat = 10,
+                           duration: CFTimeInterval? = nil) {
+        let key = "pulse"
+        layer.removeAnimation(forKey: key)
+        
         let pulse = CASpringAnimation(keyPath: "transform.scale")
-        pulse.duration = 1.0
-        pulse.fromValue = 0.95
-        pulse.toValue = 1.0
-        pulse.autoreverses = true
-        pulse.repeatCount = .greatestFiniteMagnitude
-        pulse.initialVelocity = 0.5
-        pulse.damping = 0.8
+        pulse.fromValue = fromValue
+        pulse.toValue = toValue
+        pulse.autoreverses = autoreverses
+        pulse.repeatCount = repeatCount
+        pulse.initialVelocity = initialVelocity
+        pulse.damping = damping
+        pulse.mass = mass
+        pulse.duration = duration ?? pulse.settlingDuration
         
-        let animationGroup = CAAnimationGroup()
-        animationGroup.duration = duration
-        animationGroup.repeatCount = repeatCount
-        animationGroup.animations = [pulse]
-        
-        self.layer.add(animationGroup, forKey: "pulse")
+        layer.add(pulse, forKey: key)
     }
     
-    func setBorderAndRoundCorners(width: CGFloat, radius: CGFloat, color: UIColor? = nil) {
-        layer.borderWidth = width
-        layer.borderColor = color?.cgColor ?? UIColor.black.cgColor
-        roundCorners(radius: radius)
+    // MARK: - Shimmering Animation
+    
+    func startShimmerAnimation(_ colorOne: UIColor = UIColor(white: 0.1, alpha: 1),
+                               _ colorTwo: UIColor = UIColor(white: 0.5, alpha: 1)) {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.name = "shimmer"
+        
+        gradientLayer.frame = bounds
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
+        gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
+        gradientLayer.colors = [colorOne.cgColor, colorTwo.cgColor, colorOne.cgColor]
+        gradientLayer.locations = [0.0, 0.5, 1.0]
+        layer.addSublayer(gradientLayer)
+        
+        addShimmeringAnimation(for: gradientLayer)
+    }
+    
+    func stopShimmerAnimation() {
+        layer.sublayers?.removeAll { $0.name == "shimmer" }
+    }
+    
+    func reloadShimmerAnimation() {
+        guard let shimmeringLayer = layer.sublayers?.first(where: { $0.name == "shimmer" }) else {
+            return
+        }
+        shimmeringLayer.removeAllAnimations()
+        addShimmeringAnimation(for: shimmeringLayer)
+    }
+    
+    func updateShimmerAnimation(frame: CGRect? = nil) {
+        layer.sublayers?.first { $0.name == "shimmer" }?.frame = frame ?? bounds
+    }
+    
+    private func addShimmeringAnimation(for layer: CALayer) {
+        let animation = CABasicAnimation(keyPath: "locations")
+        animation.fromValue = ShimmerAnimationConfig.shimmerAnimationConfig.fromValue
+        animation.toValue = ShimmerAnimationConfig.shimmerAnimationConfig.toValue
+        animation.duration = ShimmerAnimationConfig.shimmerAnimationConfig.duration
+        animation.repeatCount = ShimmerAnimationConfig.shimmerAnimationConfig.repeatCount
+        layer.add(animation, forKey: animation.keyPath)
     }
 }

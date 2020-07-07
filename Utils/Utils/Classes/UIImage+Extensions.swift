@@ -8,9 +8,9 @@
 
 import UIKit
 
-extension UIImage {
+public extension UIImage {
     
-    public func fixOrientation() -> UIImage? {
+    func fixOrientation() -> UIImage? {
         if self.imageOrientation == .up {
             return self
         }
@@ -67,7 +67,7 @@ extension UIImage {
         return UIImage(cgImage: CGImage)
     }
     
-    public func imageRotatedByDegrees(degrees: CGFloat) -> UIImage {
+    func imageRotatedByDegrees(degrees: CGFloat) -> UIImage {
         var size = self.size
         size = CGSize(width: size.height, height: size.width)
         UIGraphicsBeginImageContext(size)
@@ -88,7 +88,7 @@ extension UIImage {
         return newImage
     }
     
-    public func resizeImage(_ dimension: CGFloat, opaque: Bool, contentMode: UIView.ContentMode = .scaleAspectFit) -> UIImage {
+    func resizeImage(_ dimension: CGFloat, opaque: Bool, contentMode: UIView.ContentMode = .scaleAspectFit) -> UIImage {
         var newImage: UIImage
         let size = self.size
         let scaleFactor = dimension/size.width
@@ -103,5 +103,25 @@ extension UIImage {
             self.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
         }
         return newImage
+    }
+    
+    func resizeImage(maxSize: CGFloat = 1024) -> UIImage {
+        let image = self
+        var newSize = image.size
+        
+        if image.size.height > maxSize {
+            newSize.height = maxSize
+            newSize.width = maxSize * image.size.width / image.size.height
+        } else if image.size.width > maxSize {
+            newSize.width = maxSize
+            newSize.height = maxSize * image.size.height / image.size.width
+        }
+        
+        UIGraphicsBeginImageContext(newSize)
+        image.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage ?? image
     }
 }
