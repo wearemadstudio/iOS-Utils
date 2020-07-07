@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2020-07-07
+- Alamofire 5.2 instead 5.0
+- Collection subscript safe index
+- Closure typealiases
+- UILabel Kerning + changeTextColorCycleAnimation
+- UIWindow extensions
+- UIView shimmer extension
+- Some refactoring, bug fixes, improvments, etc.
+
 ## [0.2.7] - 2019-08-14
 - Rename ```Request``` to ```RequestProtocol```
 
