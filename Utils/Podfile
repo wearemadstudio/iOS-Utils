@@ -7,5 +7,5 @@ target 'Utils' do
 
   # Pods for Utils
     pod 'Alamofire', '~> 5.2'
-    pod 'Nuke'
+    pod 'Nuke', '~> 8'
 end

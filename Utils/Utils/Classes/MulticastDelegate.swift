@@ -20,11 +20,13 @@ open class MulticastDelegate<T> {
     
     private var weakDelegates = [WeakWrapper]()
     
-    func addDelegate(delegate: T) {
+    public init() { }
+    
+    public func addDelegate(delegate: T) {
         weakDelegates.append(WeakWrapper(value: delegate as AnyObject))
     }
     
-    func removeDelegate(delegate: T) {
+    public func removeDelegate(delegate: T) {
         for (index, delegateInArray) in weakDelegates.enumerated().reversed() {
             if delegateInArray.value === (delegate as AnyObject) {
                 weakDelegates.remove(at: index)
@@ -32,7 +34,7 @@ open class MulticastDelegate<T> {
         }
     }
     
-    func invoke(invocation: (T) -> Void) {
+    public func invoke(invocation: (T) -> Void) {
         for (index, delegate) in weakDelegates.enumerated().reversed() {
             if let delegate = delegate.value {
                 invocation(delegate as! T)
@@ -43,10 +45,10 @@ open class MulticastDelegate<T> {
     }
 }
 
-func += <T: AnyObject> (left: MulticastDelegate<T>, right: T) {
+public func += <T: AnyObject> (left: MulticastDelegate<T>, right: T) {
     left.addDelegate(delegate: right)
 }
 
-func -= <T: AnyObject> (left: MulticastDelegate<T>, right: T) {
+public func -= <T: AnyObject> (left: MulticastDelegate<T>, right: T) {
     left.removeDelegate(delegate: right)
 }

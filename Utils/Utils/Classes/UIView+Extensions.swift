@@ -9,6 +9,8 @@
 import UIKit
 
 public struct ShimmerAnimationConfig {
+    var colorOne = UIColor(white: 0.1, alpha: 1)
+    var colorTwo = UIColor(white: 0.5, alpha: 1)
     var fromValue: Any? = [-1.0, -0.5, 0.0]
     var toValue: Any? = [1.0, 1.5, 2.0]
     var duration: CFTimeInterval = 0.9
@@ -160,19 +162,25 @@ public extension UIView {
     
     // MARK: - Shimmering Animation
     
-    func startShimmerAnimation(_ colorOne: UIColor = UIColor(white: 0.1, alpha: 1),
-                               _ colorTwo: UIColor = UIColor(white: 0.5, alpha: 1)) {
+    func startShimmerAnimation() {
         let gradientLayer = CAGradientLayer()
         gradientLayer.name = "shimmer"
         
         gradientLayer.frame = bounds
         gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
         gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
-        gradientLayer.colors = [colorOne.cgColor, colorTwo.cgColor, colorOne.cgColor]
+        gradientLayer.colors = [ShimmerAnimationConfig.shimmerAnimationConfig.colorOne.cgColor,
+                                ShimmerAnimationConfig.shimmerAnimationConfig.colorTwo.cgColor,
+                                ShimmerAnimationConfig.shimmerAnimationConfig.colorOne.cgColor]
         gradientLayer.locations = [0.0, 0.5, 1.0]
         layer.addSublayer(gradientLayer)
         
-        addShimmeringAnimation(for: gradientLayer)
+        let animation = CABasicAnimation(keyPath: "locations")
+        animation.fromValue = ShimmerAnimationConfig.shimmerAnimationConfig.fromValue
+        animation.toValue = ShimmerAnimationConfig.shimmerAnimationConfig.toValue
+        animation.duration = ShimmerAnimationConfig.shimmerAnimationConfig.duration
+        animation.repeatCount = ShimmerAnimationConfig.shimmerAnimationConfig.repeatCount
+        gradientLayer.add(animation, forKey: animation.keyPath)
     }
     
     func stopShimmerAnimation() {
@@ -180,23 +188,11 @@ public extension UIView {
     }
     
     func reloadShimmerAnimation() {
-        guard let shimmeringLayer = layer.sublayers?.first(where: { $0.name == "shimmer" }) else {
-            return
-        }
-        shimmeringLayer.removeAllAnimations()
-        addShimmeringAnimation(for: shimmeringLayer)
+        stopShimmerAnimation()
+        startShimmerAnimation()
     }
     
     func updateShimmerAnimation(frame: CGRect? = nil) {
         layer.sublayers?.first { $0.name == "shimmer" }?.frame = frame ?? bounds
-    }
-    
-    private func addShimmeringAnimation(for layer: CALayer) {
-        let animation = CABasicAnimation(keyPath: "locations")
-        animation.fromValue = ShimmerAnimationConfig.shimmerAnimationConfig.fromValue
-        animation.toValue = ShimmerAnimationConfig.shimmerAnimationConfig.toValue
-        animation.duration = ShimmerAnimationConfig.shimmerAnimationConfig.duration
-        animation.repeatCount = ShimmerAnimationConfig.shimmerAnimationConfig.repeatCount
-        layer.add(animation, forKey: animation.keyPath)
     }
 }

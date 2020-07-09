@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.4.1] - 2020-07-09
+- Nuke 8.* for support iOS 10
+- MulticastDelegate fixes
+- UIView Shimmer Animation reloading fixes
+
 ## [0.4.0] - 2020-07-07
 - Alamofire 5.2 instead 5.0
 - Collection subscript safe index

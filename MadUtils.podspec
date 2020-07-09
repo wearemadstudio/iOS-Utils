@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name              = 'MadUtils'
-s.version           = '0.4.0'
+s.version           = '0.4.1'
 s.summary           = 'Contains a collection of MAD utils'
 s.homepage          = 'https://github.com/wearemadru/iOS-Utils'
 s.description = <<-DESC
@@ -16,5 +16,5 @@ s.source            = {
 s.framework = 'UIKit', 'StoreKit', 'Foundation'
 s.source_files      = 'Utils/Utils/Classes/*'
 s.dependency 'Alamofire', '~> 5.2'
-s.dependency 'Nuke'
+s.dependency 'Nuke', '~> 8'
 end
