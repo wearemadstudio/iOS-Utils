@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.4.2] - 2021-01-12
+- Sorting on multiple properties
+
 ## [0.4.1] - 2020-07-09
 - Nuke 8.* for support iOS 10
 - MulticastDelegate fixes
