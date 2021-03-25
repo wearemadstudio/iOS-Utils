@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name              = 'MadUtils'
-s.version           = '0.4.3'
+s.version           = '0.4.4'
 s.summary           = 'Contains a collection of MAD utils'
 s.homepage          = 'https://github.com/wearemadru/iOS-Utils'
 s.description = <<-DESC
