@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension UIWindow {
+public extension UIWindow {
     
     func topViewController() -> UIViewController? {
         var top = rootViewController
