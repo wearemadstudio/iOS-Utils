@@ -9,6 +9,9 @@
 import UIKit
 
 public struct ShimmerAnimationConfig {
+    public var startPoint = CGPoint(x: 0, y: 1)
+    public var endPoint = CGPoint(x: 1, y: 1)
+    public var locations: [NSNumber] = [0.0, 0.5, 1.0]
     public var colorOne = UIColor(white: 0.1, alpha: 1)
     public var colorTwo = UIColor(white: 0.5, alpha: 1)
     public var fromValue: Any? = [-1.0, -0.5, 0.0]
@@ -16,7 +19,7 @@ public struct ShimmerAnimationConfig {
     public var duration: CFTimeInterval = 0.9
     public var repeatCount: Float = .infinity
     
-    public static var shimmerAnimationConfig = ShimmerAnimationConfig()
+    public static var shared = ShimmerAnimationConfig()
 }
 
 public extension UIView {
@@ -167,19 +170,19 @@ public extension UIView {
         gradientLayer.name = "shimmer"
         
         gradientLayer.frame = bounds
-        gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
-        gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
-        gradientLayer.colors = [ShimmerAnimationConfig.shimmerAnimationConfig.colorOne.cgColor,
-                                ShimmerAnimationConfig.shimmerAnimationConfig.colorTwo.cgColor,
-                                ShimmerAnimationConfig.shimmerAnimationConfig.colorOne.cgColor]
-        gradientLayer.locations = [0.0, 0.5, 1.0]
+        gradientLayer.startPoint = ShimmerAnimationConfig.shared.startPoint
+        gradientLayer.endPoint = ShimmerAnimationConfig.shared.endPoint
+        gradientLayer.colors = [ShimmerAnimationConfig.shared.colorOne.cgColor,
+                                ShimmerAnimationConfig.shared.colorTwo.cgColor,
+                                ShimmerAnimationConfig.shared.colorOne.cgColor]
+        gradientLayer.locations = ShimmerAnimationConfig.shared.locations
         layer.addSublayer(gradientLayer)
         
         let animation = CABasicAnimation(keyPath: "locations")
-        animation.fromValue = ShimmerAnimationConfig.shimmerAnimationConfig.fromValue
-        animation.toValue = ShimmerAnimationConfig.shimmerAnimationConfig.toValue
-        animation.duration = ShimmerAnimationConfig.shimmerAnimationConfig.duration
-        animation.repeatCount = ShimmerAnimationConfig.shimmerAnimationConfig.repeatCount
+        animation.fromValue = ShimmerAnimationConfig.shared.fromValue
+        animation.toValue = ShimmerAnimationConfig.shared.toValue
+        animation.duration = ShimmerAnimationConfig.shared.duration
+        animation.repeatCount = ShimmerAnimationConfig.shared.repeatCount
         gradientLayer.add(animation, forKey: animation.keyPath)
     }
     
