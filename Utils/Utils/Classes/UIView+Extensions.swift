@@ -9,14 +9,14 @@
 import UIKit
 
 public struct ShimmerAnimationConfig {
-    var colorOne = UIColor(white: 0.1, alpha: 1)
-    var colorTwo = UIColor(white: 0.5, alpha: 1)
-    var fromValue: Any? = [-1.0, -0.5, 0.0]
-    var toValue: Any? = [1.0, 1.5, 2.0]
-    var duration: CFTimeInterval = 0.9
-    var repeatCount: Float = .infinity
+    public var colorOne = UIColor(white: 0.1, alpha: 1)
+    public var colorTwo = UIColor(white: 0.5, alpha: 1)
+    public var fromValue: Any? = [-1.0, -0.5, 0.0]
+    public var toValue: Any? = [1.0, 1.5, 2.0]
+    public var duration: CFTimeInterval = 0.9
+    public var repeatCount: Float = .infinity
     
-    static var shimmerAnimationConfig = ShimmerAnimationConfig()
+    public static var shimmerAnimationConfig = ShimmerAnimationConfig()
 }
 
 public extension UIView {
