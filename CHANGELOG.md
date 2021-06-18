@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2020-06-18
+- Target Now is iOS 11.0
+- Nuke 9.* for support iOS 11
+- Alamofire 5.4
+
 ## [0.4.2] - 2021-01-12
 - Sorting on multiple properties
 

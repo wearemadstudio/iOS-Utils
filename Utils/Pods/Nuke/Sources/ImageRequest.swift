@@ -1,77 +1,48 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2021 Alexander Grebenyuk (github.com/kean).
 
 import Foundation
 
-#if !os(macOS)
-import UIKit
-#endif
+// MARK: - ImageRequest
 
 /// Represents an image request.
-public struct ImageRequest {
+public struct ImageRequest: CustomStringConvertible {
 
     // MARK: Parameters of the Request
 
-    internal var urlString: String? {
-        return _ref._urlString
-    }
-
     /// The `URLRequest` used for loading an image.
     public var urlRequest: URLRequest {
-        get { return _ref.resource.urlRequest }
-        set {
-            _mutate {
-                $0.resource = Resource.urlRequest(newValue)
-                $0._urlString = newValue.url?.absoluteString
-            }
-        }
-    }
-
-    /// Processor to be applied to the image. `Decompressor` by default.
-    ///
-    /// Decompressing compressed image formats (such as JPEG) can significantly
-    /// improve drawing performance as it allows a bitmap representation to be
-    /// created in a background rather than on the main thread.
-    public var processor: AnyImageProcessor? {
         get {
-            // Default processor on macOS is nil, on other platforms is Decompressor
-            #if !os(macOS)
-            return _ref._isDefaultProcessorUsed ? ImageRequest.decompressor : _ref._processor
-            #else
-            return _ref._isDefaultProcessorUsed ? nil : _ref._processor
-            #endif
+            switch ref.resource {
+            case let .url(url):
+                var request = URLRequest(url: url) // create lazily
+                if cachePolicy == .reloadIgnoringCachedData {
+                    request.cachePolicy = .reloadIgnoringLocalCacheData
+                }
+                return request
+            case let .urlRequest(urlRequest):
+                return urlRequest
+            }
         }
         set {
-            _mutate {
-                $0._isDefaultProcessorUsed = false
-                $0._processor = newValue
+            mutate {
+                $0.resource = Resource.urlRequest(newValue)
+                $0.urlString = newValue.url?.absoluteString
             }
         }
     }
 
-    /// The policy to use when reading or writing images to the memory cache.
-    public struct MemoryCacheOptions {
-        /// `true` by default.
-        public var isReadAllowed = true
-
-        /// `true` by default.
-        public var isWriteAllowed = true
-
-        public init() {}
+    var urlString: String? {
+        ref.urlString
     }
 
-    /// `MemoryCacheOptions()` (read allowed, write allowed) by default.
-    public var memoryCacheOptions: MemoryCacheOptions {
-        get { return _ref.memoryCacheOptions }
-        set { _mutate { $0.memoryCacheOptions = newValue } }
-    }
-
-    /// The execution priority of the request.
+    /// The execution priority of the request. The priority affects the order in which the image
+    /// requests are executed.
     public enum Priority: Int, Comparable {
         case veryLow = 0, low, normal, high, veryHigh
 
-        internal var queuePriority: Operation.QueuePriority {
+        var taskPriority: TaskPriority {
             switch self {
             case .veryLow: return .veryLow
             case .low: return .low
@@ -82,254 +53,379 @@ public struct ImageRequest {
         }
 
         public static func < (lhs: Priority, rhs: Priority) -> Bool {
-            return lhs.rawValue < rhs.rawValue
+            lhs.rawValue < rhs.rawValue
         }
     }
 
-    /// The relative priority of the operation. This value is used to influence
-    /// the order in which requests are executed. `.normal` by default.
+    /// The relative priority of the operation. The priority affects the order in which the image
+    /// requests are executed.`.normal` by default.
     public var priority: Priority {
-        get { return _ref.priority }
-        set { _mutate { $0.priority = newValue }}
+        get { ref.priority }
+        set { mutate { $0.priority = newValue } }
     }
 
-    /// Returns a key that compares requests with regards to caching images.
-    ///
-    /// The default key considers two requests equivalent it they have the same
-    /// `URLRequests` and the same processors. `URLRequests` are compared
-    /// just by their `URLs`.
-    public var cacheKey: AnyHashable? {
-        get { return _ref.cacheKey }
-        set { _mutate { $0.cacheKey = newValue } }
+    public enum CachePolicy {
+        case `default`
+        /// The image should be loaded only from the originating source.
+        ///
+        /// If you initialize the request with `URLRequest`, make sure to provide
+        /// the correct policy in the request too.
+        case reloadIgnoringCachedData
     }
 
-    /// Returns a key that compares requests with regards to loading images.
-    ///
-    /// The default key considers two requests equivalent it they have the same
-    /// `URLRequests` and the same processors. `URLRequests` are compared by
-    /// their `URL`, `cachePolicy`, and `allowsCellularAccess` properties.
-    public var loadKey: AnyHashable? {
-        get { return _ref.loadKey }
-        set { _mutate { $0.loadKey = newValue } }
+    public var cachePolicy: CachePolicy {
+        get { ref.cachePolicy }
+        set { mutate { $0.cachePolicy = newValue } }
     }
 
-    /// If decoding is disabled, when the image data is loaded, the pipeline is
-    /// not going to create an image from it and will produce the `.decodingFailed`
-    /// error instead. `false` by default.
-    var isDecodingDisabled: Bool {
-        // This only used by `ImagePreheater` right now
-        get { return _ref.isDecodingDisabled }
-        set { _mutate { $0.isDecodingDisabled = newValue } }
+    /// The request options. See `ImageRequestOptions` for more info.
+    public var options: ImageRequestOptions {
+        get { ref.options }
+        set { mutate { $0.options = newValue } }
     }
 
-    /// Custom info passed alongside the request.
-    public var userInfo: Any? {
-        get { return _ref.userInfo }
-        set { _mutate { $0.userInfo = newValue }}
+    /// Processor to be applied to the image. `nil` by default.
+    public var processors: [ImageProcessing] {
+        get { ref.processors }
+        set { mutate { $0.processors = newValue } }
     }
 
     // MARK: Initializers
 
     /// Initializes a request with the given URL.
-    public init(url: URL) {
-        _ref = Container(resource: Resource.url(url))
-        _ref._urlString = url.absoluteString
+    ///
+    /// - parameter priority: The priority of the request, `.normal` by default.
+    /// - parameter options: Advanced image loading options.
+    /// - parameter processors: Image processors to be applied after the image is loaded.
+    ///
+    /// `ImageRequest` allows you to set image processors, change the request priority and more:
+    ///
+    /// ```swift
+    /// let request = ImageRequest(
+    ///     url: URL(string: "http://...")!,
+    ///     processors: [ImageProcessors.Resize(size: imageView.bounds.size)],
+    ///     priority: .high
+    /// )
+    /// ```
+    public init(url: URL,
+                processors: [ImageProcessing] = [],
+                cachePolicy: CachePolicy = .default,
+                priority: Priority = .normal,
+                options: ImageRequestOptions = .init()) {
+        self.ref = Container(resource: Resource.url(url), processors: processors, cachePolicy: cachePolicy, priority: priority, options: options)
+        self.ref.urlString = url.absoluteString
         // creating `.absoluteString` takes 50% of time of Request creation,
         // it's still faster than using URLs as cache keys
     }
 
     /// Initializes a request with the given request.
-    public init(urlRequest: URLRequest) {
-        _ref = Container(resource: Resource.urlRequest(urlRequest))
-        _ref._urlString = urlRequest.url?.absoluteString
+    ///
+    /// - parameter priority: The priority of the request, `.normal` by default.
+    /// - parameter options: Advanced image loading options.
+    /// - parameter processors: Image processors to be applied after the image is loaded.
+    ///
+    /// `ImageRequest` allows you to set image processors, change the request priority and more:
+    ///
+    /// ```swift
+    /// let request = ImageRequest(
+    ///     url: URLRequest(url: URL(string: "http://...")!),
+    ///     processors: [ImageProcessors.Resize(size: imageView.bounds.size)],
+    ///     priority: .high
+    /// )
+    /// ```
+    public init(urlRequest: URLRequest,
+                processors: [ImageProcessing] = [],
+                cachePolicy: CachePolicy = .default,
+                priority: ImageRequest.Priority = .normal,
+                options: ImageRequestOptions = .init()) {
+        self.ref = Container(resource: Resource.urlRequest(urlRequest), processors: processors, cachePolicy: cachePolicy, priority: priority, options: options)
+        self.ref.urlString = urlRequest.url?.absoluteString
     }
-
-    #if !os(macOS)
-
-    /// Initializes a request with the given URL.
-    /// - parameter processor: Custom image processer.
-    public init<Processor: ImageProcessing>(url: URL, processor: Processor) {
-        self.init(url: url)
-        self.processor = AnyImageProcessor(processor)
-    }
-
-    /// Initializes a request with the given request.
-    /// - parameter processor: Custom image processer.
-    public init<Processor: ImageProcessing>(urlRequest: URLRequest, processor: Processor) {
-        self.init(urlRequest: urlRequest)
-        self.processor = AnyImageProcessor(processor)
-    }
-
-    /// Initializes a request with the given URL.
-    /// - parameter targetSize: Size in pixels.
-    /// - parameter contentMode: An option for how to resize the image
-    /// to the target size.
-    public init(url: URL, targetSize: CGSize, contentMode: ImageDecompressor.ContentMode, upscale: Bool = false) {
-        self.init(url: url, processor: ImageDecompressor(
-            targetSize: targetSize,
-            contentMode: contentMode,
-            upscale: upscale
-        ))
-    }
-
-    /// Initializes a request with the given request.
-    /// - parameter targetSize: Size in pixels.
-    /// - parameter contentMode: An option for how to resize the image
-    /// to the target size.
-    public init(urlRequest: URLRequest, targetSize: CGSize, contentMode: ImageDecompressor.ContentMode, upscale: Bool = false) {
-        self.init(urlRequest: urlRequest, processor: ImageDecompressor(
-            targetSize: targetSize,
-            contentMode: contentMode,
-            upscale: upscale
-        ))
-    }
-
-    fileprivate static let decompressor = AnyImageProcessor(ImageDecompressor())
-
-    #endif
 
     // CoW:
 
-    private var _ref: Container
+    private var ref: Container
 
-    private mutating func _mutate(_ closure: (Container) -> Void) {
-        if !isKnownUniquelyReferenced(&_ref) {
-            _ref = Container(container: _ref)
+    private mutating func mutate(_ closure: (Container) -> Void) {
+        if !isKnownUniquelyReferenced(&ref) {
+            ref = Container(container: ref)
         }
-        closure(_ref)
+        closure(ref)
     }
 
     /// Just like many Swift built-in types, `ImageRequest` uses CoW approach to
     /// avoid memberwise retain/releases when `ImageRequest` is passed around.
     private class Container {
         var resource: Resource
-        var _urlString: String? // memoized absoluteString
-        // true unless user set a custom one, this allows us not to store the
-        // default processor anywhere in the `Container` & skip equality tests
-        // when the default processor is used
-        var _isDefaultProcessorUsed: Bool = true
-        var _processor: AnyImageProcessor?
-        var memoryCacheOptions = MemoryCacheOptions()
-        var priority: ImageRequest.Priority = .normal
-        var cacheKey: AnyHashable?
-        var loadKey: AnyHashable?
-        var isDecodingDisabled: Bool = false
-        var userInfo: Any?
+        var urlString: String? // memoized absoluteString
+        var cachePolicy: CachePolicy
+        var priority: ImageRequest.Priority
+        var options: ImageRequestOptions
+        var processors: [ImageProcessing]
+
+        deinit {
+            #if TRACK_ALLOCATIONS
+            Allocations.decrement("ImageRequest.Container")
+            #endif
+        }
 
         /// Creates a resource with a default processor.
-        init(resource: Resource) {
+        init(resource: Resource, processors: [ImageProcessing], cachePolicy: CachePolicy, priority: Priority, options: ImageRequestOptions) {
             self.resource = resource
+            self.processors = processors
+            self.cachePolicy = cachePolicy
+            self.priority = priority
+            self.options = options
+
+            #if TRACK_ALLOCATIONS
+            Allocations.increment("ImageRequest.Container")
+            #endif
         }
 
         /// Creates a copy.
         init(container ref: Container) {
             self.resource = ref.resource
-            self._urlString = ref._urlString
-            self._isDefaultProcessorUsed = ref._isDefaultProcessorUsed
-            self._processor = ref._processor
-            self.memoryCacheOptions = ref.memoryCacheOptions
+            self.urlString = ref.urlString
+            self.processors = ref.processors
+            self.cachePolicy = ref.cachePolicy
             self.priority = ref.priority
-            self.cacheKey = ref.cacheKey
-            self.loadKey = ref.loadKey
-            self.isDecodingDisabled = ref.isDecodingDisabled
-            self.userInfo = ref.userInfo
+            self.options = ref.options
+
+            #if TRACK_ALLOCATIONS
+            Allocations.increment("ImageRequest.Container")
+            #endif
+        }
+
+        var preferredURLString: String {
+            options.filteredURL ?? urlString ?? ""
         }
     }
 
     /// Resource representation (either URL or URLRequest).
-    private enum Resource {
+    private enum Resource: CustomStringConvertible {
         case url(URL)
         case urlRequest(URLRequest)
 
-        var urlRequest: URLRequest {
+        var description: String {
             switch self {
-            case let .url(url): return URLRequest(url: url) // create lazily
-            case let .urlRequest(urlRequest): return urlRequest
+            case let .url(url):
+                return "\(url)"
+            case let .urlRequest(urlRequest):
+                return "\(urlRequest)"
             }
         }
     }
-}
 
-public extension ImageRequest {
-    /// Appends a processor to the request. You can append arbitrary number of
-    /// processors to the request.
-    mutating func process<P: ImageProcessing>(with processor: P) {
-        guard let existing = self.processor else {
-            self.processor = AnyImageProcessor(processor)
-            return
+    public var description: String {
+        return """
+        ImageRequest {
+            resource: \(ref.resource)
+            priority: \(ref.priority)
+            processors: \(ref.processors)
+            options: {
+                memoryCacheOptions: \(ref.options.memoryCacheOptions)
+                filteredURL: \(String(describing: ref.options.filteredURL))
+                cacheKey: \(String(describing: ref.options.cacheKey))
+                loadKey: \(String(describing: ref.options.loadKey))
+                userInfo: \(String(describing: ref.options.userInfo))
+            }
         }
-        // Chain new processor and the existing one.
-        self.processor = AnyImageProcessor(ImageProcessorComposition([existing, AnyImageProcessor(processor)]))
-    }
-
-    /// Appends a processor to the request. You can append arbitrary number of
-    /// processors to the request.
-    func processed<P: ImageProcessing>(with processor: P) -> ImageRequest {
-        var request = self
-        request.process(with: processor)
-        return request
-    }
-
-    /// Appends a processor to the request. You can append arbitrary number of
-    /// processors to the request.
-    mutating func process<Key: Hashable>(key: Key, _ closure: @escaping (Image) -> Image?) {
-        process(with: AnonymousImageProcessor<Key>(key, closure))
-    }
-
-    /// Appends a processor to the request. You can append arbitrary number of
-    /// processors to the request.
-    func processed<Key: Hashable>(key: Key, _ closure: @escaping (Image) -> Image?) -> ImageRequest {
-        return processed(with: AnonymousImageProcessor<Key>(key, closure))
+        """
     }
 }
 
-internal extension ImageRequest {
+// MARK: - ImageRequestOptions (Advanced Options)
+
+public struct ImageRequestOptions {
+    /// The policy to use when reading or writing images to the memory cache.
+    ///
+    /// Soft-deprecated in Nuke 9.2.
+    public struct MemoryCacheOptions {
+        /// `true` by default.
+        public var isReadAllowed = true
+
+        /// `true` by default.
+        public var isWriteAllowed = true
+
+        public init(isReadAllowed: Bool = true, isWriteAllowed: Bool = true) {
+            self.isReadAllowed = isReadAllowed
+            self.isWriteAllowed = isWriteAllowed
+        }
+    }
+
+    /// `MemoryCacheOptions()` (read allowed, write allowed) by default.
+    public var memoryCacheOptions: MemoryCacheOptions
+
+    /// Provide a `filteredURL` to be used as a key for caching in case the original URL
+    /// contains transient query parameters.
+    ///
+    /// ```
+    /// let request = ImageRequest(
+    ///     url: URL(string: "http://example.com/image.jpeg?token=123")!,
+    ///     options: ImageRequestOptions(
+    ///         filteredURL: "http://example.com/image.jpeg"
+    ///     )
+    /// )
+    /// ```
+    public var filteredURL: String?
+
+    /// The **memory** cache key for final processed images. Set if you are not
+    /// happy with the default behavior.
+    ///
+    /// By default, two requests are considered equivalent if they have the same
+    /// URLs and the same processors.
+    public var cacheKey: AnyHashable?
+
+    /// Returns a key that compares requests with regards to loading images.
+    ///
+    /// The default key considers two requests equivalent if they have the same
+    /// `URLRequests` and the same processors. `URLRequests` are compared by
+    /// their `URL`, `cachePolicy`, and `allowsCellularAccess` properties.
+    public var loadKey: AnyHashable?
+
+    /// Custom info passed alongside the request.
+    public var userInfo: [AnyHashable: Any]
+
+    public init(memoryCacheOptions: MemoryCacheOptions = .init(),
+                filteredURL: String? = nil,
+                cacheKey: AnyHashable? = nil,
+                loadKey: AnyHashable? = nil,
+                userInfo: [AnyHashable: Any] = [:]) {
+        self.memoryCacheOptions = memoryCacheOptions
+        self.filteredURL = filteredURL
+        self.cacheKey = cacheKey
+        self.loadKey = loadKey
+        self.userInfo = userInfo
+    }
+}
+
+// MARK: - ImageRequestKeys (Internal)
+
+extension ImageRequest {
+
+    // MARK: - Cache Keys
+
+    /// A key for processed image in memory cache.
+    func makeCacheKeyForFinalImage() -> ImageRequest.CacheKey {
+        CacheKey(request: self)
+    }
+
+    /// A key for processed image data in disk cache.
+    func makeCacheKeyForFinalImageData() -> String {
+        "\(ref.preferredURLString)\(ImageProcessors.Composition(processors).identifier)"
+    }
+
+    /// A key for original image data in disk cache.
+    func makeCacheKeyForOriginalImageData() -> String {
+        ref.preferredURLString
+    }
+
+    // MARK: - Load Keys
+
+    /// A key for deduplicating operations for fetching the processed image.
+    func makeLoadKeyForFinalImage() -> LoadKeyForProcessedImage {
+        LoadKeyForProcessedImage(
+            cacheKey: makeCacheKeyForFinalImage(),
+            loadKey: makeLoadKeyForOriginalImage()
+        )
+    }
+
+    /// A key for deduplicating operations for fetching the original image.
+    func makeLoadKeyForOriginalImage() -> LoadKeyForOriginalImage {
+        LoadKeyForOriginalImage(request: self)
+    }
+
+    // MARK: - Internals (Keys)
+
+    // Uniquely identifies a cache processed image.
     struct CacheKey: Hashable {
         let request: ImageRequest
 
         func hash(into hasher: inout Hasher) {
-            if let customKey = request._ref.cacheKey {
+            if let customKey = request.ref.options.cacheKey {
                 hasher.combine(customKey)
             } else {
-                hasher.combine(request._ref._urlString?.hashValue ?? 0)
+                hasher.combine(request.ref.preferredURLString)
             }
         }
 
         static func == (lhs: CacheKey, rhs: CacheKey) -> Bool {
-            let lhs = lhs.request, rhs = rhs.request
-            if let lhsCustomKey = lhs._ref.cacheKey, let rhsCustomKey = rhs._ref.cacheKey {
-                return lhsCustomKey == rhsCustomKey
+            let lhs = lhs.request.ref, rhs = rhs.request.ref
+            if lhs.options.cacheKey != nil || rhs.options.cacheKey != nil {
+                return lhs.options.cacheKey == rhs.options.cacheKey
             }
-            guard lhs._ref._urlString == rhs._ref._urlString else {
-                return false
-            }
-            return (lhs._ref._isDefaultProcessorUsed && rhs._ref._isDefaultProcessorUsed)
-                || (lhs.processor == rhs.processor)
+            return lhs.preferredURLString == rhs.preferredURLString && lhs.processors == rhs.processors
         }
     }
 
-    struct LoadKey: Hashable {
+    // Uniquely identifies a task of retrieving the processed image.
+    struct LoadKeyForProcessedImage: Hashable {
+        let cacheKey: CacheKey
+        let loadKey: AnyHashable
+    }
+
+    // Uniquely identifies a task of retrieving the original image.
+    struct LoadKeyForOriginalImage: Hashable {
         let request: ImageRequest
 
         func hash(into hasher: inout Hasher) {
-            if let customKey = request._ref.loadKey {
+            if let customKey = request.ref.options.loadKey {
                 hasher.combine(customKey)
             } else {
-                hasher.combine(request._ref._urlString?.hashValue ?? 0)
+                hasher.combine(request.ref.preferredURLString)
             }
         }
 
-        static func == (lhs: LoadKey, rhs: LoadKey) -> Bool {
-            func isEqual(_ lhs: URLRequest, _ rhs: URLRequest) -> Bool {
-                return lhs.cachePolicy == rhs.cachePolicy
-                    && lhs.allowsCellularAccess == rhs.allowsCellularAccess
+        static func == (lhs: LoadKeyForOriginalImage, rhs: LoadKeyForOriginalImage) -> Bool {
+            let (lhs, rhs) = (lhs.request, rhs.request)
+            if lhs.options.loadKey != nil || rhs.options.loadKey != nil {
+                return lhs.options.loadKey == rhs.options.loadKey
             }
-            let lhs = lhs.request, rhs = rhs.request
-            if let lhsCustomKey = lhs._ref.loadKey, let rhsCustomKey = rhs._ref.loadKey {
-                return lhsCustomKey == rhsCustomKey
-            }
-            return lhs._ref._urlString == rhs._ref._urlString
-                && isEqual(lhs.urlRequest, rhs.urlRequest)
+            return Parameters(lhs) == Parameters(rhs)
         }
+
+        private struct Parameters: Hashable {
+            let urlString: String?
+            let requestCachePolicy: CachePolicy
+            let cachePolicy: URLRequest.CachePolicy
+            let allowsCellularAccess: Bool
+
+            init(_ request: ImageRequest) {
+                self.urlString = request.ref.urlString
+                self.requestCachePolicy = request.cachePolicy
+                switch request.ref.resource {
+                case .url:
+                    self.cachePolicy = .useProtocolCachePolicy
+                    self.allowsCellularAccess = true
+                case let .urlRequest(urlRequest):
+                    self.cachePolicy = urlRequest.cachePolicy
+                    self.allowsCellularAccess = urlRequest.allowsCellularAccess
+                }
+            }
+        }
+    }
+}
+
+// MARK: - ImageRequestConvertible
+
+public protocol ImageRequestConvertible {
+    func asImageRequest() -> ImageRequest
+}
+
+extension ImageRequest: ImageRequestConvertible {
+    public func asImageRequest() -> ImageRequest {
+        self
+    }
+}
+
+extension URL: ImageRequestConvertible {
+    public func asImageRequest() -> ImageRequest {
+        ImageRequest(url: self)
+    }
+}
+
+extension URLRequest: ImageRequestConvertible {
+    public func asImageRequest() -> ImageRequest {
+        ImageRequest(urlRequest: self)
     }
 }
