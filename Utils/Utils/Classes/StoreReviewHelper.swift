@@ -11,9 +11,9 @@ import StoreKit
 public struct StoreReviewHelper {
     
     static var userDefaultsAppOpenedKey = "appOpenedCount"
-    static var appId = ""
+    public static var appId = ""
     
-    static func incrementAppOpenedCount() {
+    public static func incrementAppOpenedCount() {
         let userDefaults = UserDefaults.standard
         var appOpenCount = userDefaults.integer(forKey: StoreReviewHelper.userDefaultsAppOpenedKey)
         appOpenCount += 1
@@ -21,7 +21,7 @@ public struct StoreReviewHelper {
         userDefaults.synchronize()
     }
     
-    static func checkAndAskForReview() {
+    public static func checkAndAskForReview() {
         let userDefaults = UserDefaults.standard
         let appOpenCount = userDefaults.integer(forKey: StoreReviewHelper.userDefaultsAppOpenedKey)
         
@@ -35,7 +35,7 @@ public struct StoreReviewHelper {
         }
     }
     
-    static func requestReview() {
+    public static func requestReview() {
         if #available(iOS 10.3, *) {
             SKStoreReviewController.requestReview()
         } else {
